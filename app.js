@@ -54,9 +54,63 @@ let currentGuessProductId = null;
 
 
 // -------------------------------
-// Navigation & Views
+// History & State Management
 // -------------------------------
-function switchView(viewId) {
+history.replaceState({ view: 'view-main' }, "", "#view-main");
+
+window.addEventListener('popstate', (event) => {
+    // Close overlays if open
+    const activeOverlays = document.querySelectorAll('.overlay.active');
+    if (activeOverlays.length > 0) {
+        activeOverlays.forEach(overlay => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        });
+        // Push state back to prevent falling back a view
+        history.pushState({ view: getCurrentViewId() }, "", window.location.hash);
+        return;
+    }
+
+    if (event.state && event.state.view) {
+        switchView(event.state.view, false); // false to not push state again
+        
+        // Handle theme changing based on history state
+        if (event.state.view === 'view-main') {
+            document.body.classList.remove('theme-d360');
+            document.body.classList.remove('theme-mobily');
+            document.getElementById('header-d360-logo').classList.add('hidden');
+            if (document.getElementById('header-mobily-logo')) {
+                document.getElementById('header-mobily-logo').classList.add('hidden');
+            }
+            document.getElementById('header-tu-logo').classList.remove('hidden');
+        } else if (event.state.view === 'view-event-intro' || event.state.view === 'view-products') {
+            document.body.classList.add('theme-d360');
+            document.body.classList.remove('theme-mobily');
+            document.getElementById('header-tu-logo').classList.add('hidden');
+            if (document.getElementById('header-mobily-logo')) {
+                document.getElementById('header-mobily-logo').classList.add('hidden');
+            }
+            document.getElementById('header-d360-logo').classList.remove('hidden');
+        } else if (event.state.view === 'view-mobily-intro') {
+            document.body.classList.add('theme-mobily');
+            document.body.classList.remove('theme-d360');
+            document.getElementById('header-tu-logo').classList.add('hidden');
+            document.getElementById('header-d360-logo').classList.add('hidden');
+            document.getElementById('header-mobily-logo').classList.remove('hidden');
+        }
+    }
+});
+
+function getCurrentViewId() {
+    const active = document.querySelector('.active-view');
+    return active ? active.id : 'view-main';
+}
+
+function switchView(viewId, pushToHistory = true) {
+    if (pushToHistory) {
+        history.pushState({ view: viewId }, "", `#${viewId}`);
+    }
+
     // Hide all views
     document.querySelectorAll('.view').forEach(el => {
         el.classList.remove('active-view');
@@ -78,9 +132,39 @@ function goToEvent() {
     switchView('view-event-intro');
     
     // Switch Theme & Header
+    document.body.classList.remove('theme-mobily');
     document.body.classList.add('theme-d360');
     document.getElementById('header-tu-logo').classList.add('hidden');
+    if (document.getElementById('header-mobily-logo')) {
+        document.getElementById('header-mobily-logo').classList.add('hidden');
+    }
     document.getElementById('header-d360-logo').classList.remove('hidden');
+}
+
+function goToMobilyEvent() {
+    switchView('view-mobily-intro');
+    
+    // Switch Theme & Header
+    document.body.classList.remove('theme-d360');
+    document.body.classList.add('theme-mobily');
+    document.getElementById('header-tu-logo').classList.add('hidden');
+    document.getElementById('header-d360-logo').classList.add('hidden');
+    document.getElementById('header-mobily-logo').classList.remove('hidden');
+}
+
+function resetToHome() {
+    switchView('view-main');
+    
+    // Revert Theme
+    document.body.classList.remove('theme-d360');
+    document.body.classList.remove('theme-mobily');
+    
+    // Revert Headers
+    document.getElementById('header-d360-logo').classList.add('hidden');
+    if (document.getElementById('header-mobily-logo')) {
+        document.getElementById('header-mobily-logo').classList.add('hidden');
+    }
+    document.getElementById('header-tu-logo').classList.remove('hidden');
 }
 
 

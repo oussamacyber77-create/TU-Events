@@ -32,6 +32,16 @@ body.theme-d360 {
     --border: #EDEDED;
 }
 
+body.theme-mobily {
+    /* Mobily Theme Variable Overrides */
+    --primary: #1d82f5;
+    --primary-dark: #1565C0;
+    --bg-color: #F0F4F8;
+    --text-dark: #222222;
+    --text-gray: #555555;
+    --border: #DDE1E6;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-dark);
@@ -72,11 +82,17 @@ body {
 }
 
 .fallback-logo {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 1.5rem;
-    letter-spacing: 1px;
+}
+
+
+.fallback-logo img {
+    max-width: 170px;
+    height: auto;
+    display: block;
 }
 
 .fallback-title {
@@ -252,6 +268,10 @@ body {
 
 body.theme-d360 .countdown-timer {
     background: rgba(255, 90, 60, 0.08);
+}
+
+body.theme-mobily .countdown-timer {
+    background: rgba(29, 130, 245, 0.08);
 }
 
 /* Products Grid */
